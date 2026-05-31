@@ -2492,3 +2492,1039 @@ You will deeply learn:
 * Indexes
 * Normalization
 * Enterprise schema design
+
+
+---
+
+
+# WEEK 1 — DAY 4
+
+# PostgreSQL Basics — Enterprise Database Design
+
+Today you will learn:
+
+* PostgreSQL fundamentals
+* Database design
+* Tables
+* Relationships
+* Primary keys
+* Foreign keys
+* Constraints
+* Indexes
+* Normalization
+* Enterprise schema design mindset
+
+This is one of the MOST important backend skills.
+
+A strong backend engineer must know:
+
+```text id="f88q6o"
+How to design good databases.
+```
+
+---
+
+# 1. Why PostgreSQL?
+
+You are using:
+
+PostgreSQL
+
+because it is:
+
+* Enterprise-grade
+* Reliable
+* ACID compliant
+* Highly scalable
+* Widely used in companies
+
+Companies using PostgreSQL:
+
+* Apple
+* Instagram
+* Spotify
+
+---
+
+# 2. Important Database Concepts
+
+# Table
+
+Stores data in rows and columns.
+
+Example:
+
+```text id="z7ecbe"
+users
+tasks
+projects
+roles
+```
+
+---
+
+# Row
+
+Single record.
+
+Example:
+
+```text id="sax67c"
+1 | Vidya | sagar@gmail.com
+```
+
+---
+
+# Column
+
+Data field.
+
+Example:
+
+```text id="jclm8u"
+first_name
+email
+created_at
+```
+
+---
+
+# Schema
+
+Logical grouping of tables.
+
+Default schema:
+
+```text id="yjlwmm"
+public
+```
+
+Later enterprise systems may use:
+
+```text id="ppjlwm"
+auth
+audit
+reporting
+```
+
+---
+
+# 3. Primary Key (PK)
+
+# Purpose
+
+Uniquely identifies each row.
+
+Example:
+
+```sql id="6rjlwm"
+id BIGSERIAL PRIMARY KEY
+```
+
+---
+
+# Why Important?
+
+Without primary key:
+
+* Duplicate rows possible
+* Hard to identify records
+* Relationships break
+
+---
+
+# Enterprise Standard
+
+Usually:
+
+```sql id="jlwmk8"
+BIGSERIAL
+```
+
+OR
+
+```sql id="7z8jlwm"
+UUID
+```
+
+---
+
+# Example
+
+```sql id="jlwm4r"
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(100)
+);
+```
+
+---
+
+# 4. Foreign Key (FK)
+
+# Purpose
+
+Creates relationships between tables.
+
+---
+
+# Example
+
+A task belongs to a user.
+
+```text id="0pjlwm"
+tasks.user_id → users.id
+```
+
+---
+
+# Example SQL
+
+```sql id="jlwm5g"
+CREATE TABLE tasks (
+    id BIGSERIAL PRIMARY KEY,
+
+    title VARCHAR(200),
+
+    assigned_user_id BIGINT,
+
+    CONSTRAINT fk_task_user
+        FOREIGN KEY (assigned_user_id)
+        REFERENCES users(id)
+);
+```
+
+---
+
+# Enterprise Understanding
+
+Foreign keys:
+
+* Maintain data integrity
+* Prevent invalid references
+* Protect relationships
+
+---
+
+# 5. One-to-One Relationship
+
+# Example
+
+```text id="fjlwmq"
+User → UserProfile
+```
+
+One user has one profile.
+
+---
+
+# Example
+
+```sql id="4jlwm6"
+CREATE TABLE user_profiles (
+    id BIGSERIAL PRIMARY KEY,
+
+    user_id BIGINT UNIQUE,
+
+    bio TEXT,
+
+    CONSTRAINT fk_profile_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+);
+```
+
+---
+
+# 6. One-to-Many Relationship
+
+# MOST COMMON Relationship
+
+Example:
+
+```text id="jlwm2t"
+One Project → Many Tasks
+```
+
+---
+
+# Example
+
+```sql id="jlwm7y"
+CREATE TABLE projects (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(200)
+);
+
+CREATE TABLE tasks (
+    id BIGSERIAL PRIMARY KEY,
+
+    title VARCHAR(200),
+
+    project_id BIGINT,
+
+    CONSTRAINT fk_task_project
+        FOREIGN KEY (project_id)
+        REFERENCES projects(id)
+);
+```
+
+---
+
+# 7. Many-to-Many Relationship
+
+# Example
+
+```text id="rjlwm8"
+Users ↔ Roles
+```
+
+One user can have many roles.
+One role can belong to many users.
+
+---
+
+# Solution
+
+Use junction table.
+
+---
+
+# Example
+
+```sql id="jlwm9v"
+CREATE TABLE roles (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+CREATE TABLE user_roles (
+
+    user_id BIGINT,
+    role_id BIGINT,
+
+    PRIMARY KEY (user_id, role_id),
+
+    CONSTRAINT fk_user_roles_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id),
+
+    CONSTRAINT fk_user_roles_role
+        FOREIGN KEY (role_id)
+        REFERENCES roles(id)
+);
+```
+
+---
+
+# 8. Constraints
+
+# Purpose
+
+Protect database integrity.
+
+---
+
+# NOT NULL
+
+```sql id="qjlwm1"
+email VARCHAR(150) NOT NULL
+```
+
+Field cannot be empty.
+
+---
+
+# UNIQUE
+
+```sql id="8jlwm2"
+email VARCHAR(150) UNIQUE
+```
+
+Prevents duplicates.
+
+---
+
+# CHECK
+
+```sql id="jlwm3m"
+CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH'))
+```
+
+Restricts allowed values.
+
+---
+
+# DEFAULT
+
+```sql id="jlwm4w"
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+Sets default value.
+
+---
+
+# Enterprise Rule
+
+Use constraints aggressively.
+
+Database should protect data.
+
+---
+
+# 9. Indexes
+
+# Purpose
+
+Improve query performance.
+
+---
+
+# Example
+
+```sql id="4jlwmx"
+CREATE INDEX idx_users_email
+ON users(email);
+```
+
+---
+
+# Why Needed?
+
+Without indexes:
+
+* Slow searches
+* Full table scans
+* Performance issues
+
+---
+
+# Common Indexed Fields
+
+```text id="0jlwmc"
+email
+status
+created_at
+foreign keys
+```
+
+---
+
+# Important
+
+Indexes improve:
+
+* SELECT
+
+But slightly slow:
+
+* INSERT
+* UPDATE
+
+---
+
+# 10. Normalization
+
+# Purpose
+
+Reduce duplicated data.
+
+---
+
+# BAD DESIGN
+
+```text id="xjlwm9"
+tasks table:
+
+assigned_user_name
+assigned_user_email
+assigned_user_phone
+```
+
+Duplicate user data everywhere.
+
+---
+
+# GOOD DESIGN
+
+```text id="7jlwmq"
+tasks.user_id
+```
+
+Reference users table.
+
+---
+
+# Benefits
+
+* Cleaner design
+* Easier updates
+* Better integrity
+* Smaller database size
+
+---
+
+# 11. Enterprise Schema Design
+
+# Recommended Tables
+
+---
+
+# users
+
+```sql id="jlwm0j"
+id
+first_name
+last_name
+email
+password
+status
+created_at
+updated_at
+```
+
+---
+
+# roles
+
+```sql id="jlwm1f"
+id
+name
+description
+```
+
+---
+
+# user_roles
+
+```sql id="7jlwm5"
+user_id
+role_id
+```
+
+---
+
+# projects
+
+```sql id="0jlwmk"
+id
+name
+description
+status
+created_by
+created_at
+```
+
+---
+
+# tasks
+
+```sql id="4jlwm1"
+id
+title
+description
+status
+priority
+project_id
+assigned_user_id
+created_at
+```
+
+---
+
+# audit_logs
+
+```sql id="jlwm5z"
+id
+action
+entity_name
+entity_id
+performed_by
+performed_at
+```
+
+---
+
+# 12. Naming Conventions
+
+# Tables
+
+Use:
+
+```text id="8jlwmh"
+snake_case
+plural
+```
+
+Good:
+
+```text id="ljlwmx"
+users
+task_comments
+audit_logs
+```
+
+---
+
+# Constraints
+
+Good naming:
+
+```text id="vjlwmv"
+fk_task_user
+uk_users_email
+```
+
+---
+
+# Indexes
+
+```text id="jlwm4n"
+idx_users_email
+idx_tasks_status
+```
+
+---
+
+# 13. Create Real Enterprise Migrations
+
+# V2__create_roles_table.sql
+
+```sql id="yjlwm7"
+CREATE TABLE roles (
+    id BIGSERIAL PRIMARY KEY,
+
+    name VARCHAR(100) NOT NULL UNIQUE,
+
+    description VARCHAR(255)
+);
+```
+
+---
+
+# V3__create_user_roles_table.sql
+
+```sql id="djlwm8"
+CREATE TABLE user_roles (
+
+    user_id BIGINT NOT NULL,
+
+    role_id BIGINT NOT NULL,
+
+    PRIMARY KEY (user_id, role_id),
+
+    CONSTRAINT fk_user_roles_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id),
+
+    CONSTRAINT fk_user_roles_role
+        FOREIGN KEY (role_id)
+        REFERENCES roles(id)
+);
+```
+
+---
+
+# V4__create_projects_table.sql
+
+```sql id="1jlwmz"
+CREATE TABLE projects (
+
+    id BIGSERIAL PRIMARY KEY,
+
+    name VARCHAR(200) NOT NULL,
+
+    description TEXT,
+
+    status VARCHAR(50),
+
+    created_by BIGINT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_project_creator
+        FOREIGN KEY (created_by)
+        REFERENCES users(id)
+);
+```
+
+---
+
+# V5__create_tasks_table.sql
+
+```sql id="jlwm2m"
+CREATE TABLE tasks (
+
+    id BIGSERIAL PRIMARY KEY,
+
+    title VARCHAR(200) NOT NULL,
+
+    description TEXT,
+
+    status VARCHAR(50),
+
+    priority VARCHAR(50),
+
+    project_id BIGINT,
+
+    assigned_user_id BIGINT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_task_project
+        FOREIGN KEY (project_id)
+        REFERENCES projects(id),
+
+    CONSTRAINT fk_task_user
+        FOREIGN KEY (assigned_user_id)
+        REFERENCES users(id)
+);
+```
+
+---
+
+# 14. Run Application Again
+
+Run:
+
+```bash id="4jlwm7"
+mvn spring-boot:run
+```
+
+Flyway should apply all migrations automatically.
+
+---
+
+# 15. Verify Tables
+
+Run:
+
+```sql id="5jlwm6"
+SELECT * FROM flyway_schema_history;
+```
+
+You should see:
+
+* V1
+* V2
+* V3
+* V4
+* V5
+
+---
+
+# Verify Tables Exist
+
+```sql id="6jlwm2"
+\dt
+```
+
+Expected:
+
+```text id="7jlwm1"
+users
+roles
+user_roles
+projects
+tasks
+flyway_schema_history
+```
+
+---
+
+# 16. Today's Practical Tasks
+
+# Task 1
+
+Create:
+
+* roles table
+* projects table
+* tasks table
+
+using Flyway migrations.
+
+---
+
+# Task 2
+
+Add:
+
+* Primary keys
+* Foreign keys
+* Constraints
+
+---
+
+# Task 3
+
+Create:
+
+* user_roles many-to-many table
+
+---
+
+# Task 4
+
+Add indexes:
+
+* users.email
+* tasks.status
+
+---
+
+# Task 5
+
+Practice SQL queries:
+
+```sql id="9jlwm0"
+SELECT *
+INSERT
+UPDATE
+DELETE
+JOIN
+```
+
+---
+
+# 17. Important Enterprise Understanding
+
+# Database Design Is Permanent
+
+Bad schema design becomes expensive later.
+
+Companies spend YEARS fixing poor database designs.
+
+So always think carefully about:
+
+* Relationships
+* Constraints
+* Naming
+* Indexes
+* Scalability
+
+---
+
+# 18. End Of Day Outcome
+
+After today you should understand:
+
+* Relationships
+* Foreign keys
+* Constraints
+* Indexes
+* Enterprise schema design
+* Flyway migrations
+* PostgreSQL fundamentals
+
+---
+
+# Tomorrow (Day 5)
+
+You will deeply learn:
+
+* Flyway advanced concepts
+* Migration strategies
+* Rollback mindset
+* Versioning
+* Seed data
+* Production database practices
+* Enterprise migration workflows
+
+
+---
+
+This is a VERY common and important Flyway learning moment.
+
+Your application fails because:
+
+```text id="0g6h8f"
+You modified V1 migration AFTER it was already executed.
+```
+
+Flyway protects database consistency using checksums.
+
+---
+
+# Why This Happened
+
+Initially your `V1__create_users_table.sql` looked like:
+
+```sql id="jlwmf1"
+CREATE TABLE users (
+   id BIGSERIAL PRIMARY KEY,
+   first_name VARCHAR(100),
+   ...
+);
+```
+
+Flyway:
+
+* executed it
+* stored checksum in:
+
+```text id="jlwmf2"
+flyway_schema_history
+```
+
+Then later you changed V1:
+
+```sql id="jlwmf3"
+password VARCHAR(255),
+status VARCHAR(50),
+updated_at TIMESTAMP
+```
+
+Now:
+
+* database version ≠ local file version
+
+Flyway detects mismatch and stops startup for safety.
+
+---
+
+# Best Practice Understanding
+
+# NEVER modify executed migrations in real projects.
+
+Instead:
+
+* create new migration
+* alter schema safely
+
+Example:
+
+```text id="jlwmf4"
+V6__add_user_status_column.sql
+```
+
+This is enterprise practice.
+
+---
+
+# BUT — Since You Are Still Learning
+
+And this is early local development,
+you can safely RESET database.
+
+This is the cleanest option now.
+
+---
+
+# Recommended Solution (Best For You)
+
+# Step 1 — Drop Database
+
+Open PostgreSQL:
+
+```sql id="jlwmf5"
+DROP DATABASE task_management;
+```
+
+---
+
+# Step 2 — Recreate Database
+
+```sql id="jlwmf6"
+CREATE DATABASE task_management;
+```
+
+---
+
+# Step 3 — Restart Application
+
+Run:
+
+```bash id="jlwmf7"
+mvn spring-boot:run
+```
+
+Now Flyway will:
+
+* execute V1
+* V2
+* V3
+* V4
+* V5
+* V6
+
+from scratch.
+
+---
+
+# Expected Result
+
+You should see:
+
+```text id="jlwmf8"
+Successfully applied 6 migrations
+```
+
+---
+
+# Verify
+
+Run:
+
+```sql id="jlwmf9"
+SELECT * FROM flyway_schema_history;
+```
+
+You should see:
+
+* V1
+* V2
+* V3
+* V4
+* V5
+* V6
+
+---
+
+# IMPORTANT ENTERPRISE UNDERSTANDING
+
+# In Real Production
+
+You SHOULD NOT:
+
+* drop database
+* modify old migrations
+
+Instead:
+
+* create new migration files
+
+Example:
+
+```text id="jlwmg0"
+V7__add_updated_at_to_users.sql
+```
+
+---
+
+# Alternative Solution (NOT Recommended For Learning Yet)
+
+You may see online:
+
+```bash id="jlwmg1"
+flyway repair
+```
+
+Avoid this for now.
+
+You should first properly understand migration history discipline.
+
+---
+
+# Final Recommendation
+
+For your current learning stage:
+
+```text id="jlwmg2"
+Drop DB
+Recreate DB
+Run app again
+```
+
+This is the cleanest and safest approach right now.
