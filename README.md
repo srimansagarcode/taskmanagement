@@ -3528,3 +3528,643 @@ Run app again
 ```
 
 This is the cleanest and safest approach right now.
+
+
+
+---
+
+
+# WEEK 1 — DAY 5
+
+# Flyway Advanced Concepts — Enterprise Database Migration Strategy
+
+Today you will deeply learn:
+
+* Migration versioning
+* Migration lifecycle
+* Migration discipline
+* Schema evolution
+* Roll-forward strategy
+* Seed data
+* Production migration mindset
+* Flyway best practices
+
+Yesterday’s checksum issue was actually a PERFECT introduction to today’s topic.
+
+You already experienced a real-world Flyway problem.
+
+That is excellent learning.
+
+---
+
+# 1. What Is Flyway Really?
+
+Flyway is NOT just:
+
+```text id="jlwmg3"
+SQL file runner
+```
+
+It is:
+
+```text id="jlwmg4"
+Database version control system
+```
+
+Similar to:
+
+* Git for code
+* Flyway for database schema
+
+---
+
+# 2. Why Companies Use Flyway
+
+Without migration tools:
+
+Problems:
+
+* Different databases in different environments
+* Manual SQL execution
+* Missing columns
+* Deployment failures
+* Production inconsistencies
+
+Flyway solves this.
+
+---
+
+# 3. How Flyway Works Internally
+
+# Migration Flow
+
+```text id="jlwmg5"
+Application Starts
+        ↓
+Flyway checks flyway_schema_history
+        ↓
+Compares executed versions
+        ↓
+Runs new migrations
+        ↓
+Stores checksums
+        ↓
+Application Starts Successfully
+```
+
+---
+
+# 4. The Most Important Flyway Rule
+
+# NEVER MODIFY EXECUTED MIGRATIONS
+
+Once migration is executed:
+
+```text id="jlwmg6"
+DO NOT EDIT IT
+```
+
+---
+
+# Why?
+
+Flyway stores:
+
+* Version
+* Filename
+* Checksum
+* Execution timestamp
+
+Inside:
+
+```text id="jlwmg7"
+flyway_schema_history
+```
+
+---
+
+# What Happens If You Modify?
+
+You already saw this:
+
+```text id="jlwmg8"
+Migration checksum mismatch
+```
+
+This is Flyway protecting database integrity.
+
+---
+
+# 5. Correct Enterprise Migration Strategy
+
+# WRONG
+
+```text id="jlwmg9"
+Edit V1__create_users_table.sql
+```
+
+---
+
+# CORRECT
+
+Create new migration:
+
+```text id="jlwmh0"
+V7__add_status_to_users.sql
+```
+
+---
+
+# Example
+
+## V7__add_status_to_users.sql
+
+```sql id="jlwmh1"
+ALTER TABLE users
+ADD COLUMN status VARCHAR(50);
+```
+
+This is enterprise database evolution.
+
+---
+
+# 6. Migration Naming Convention
+
+# Correct Format
+
+```text id="jlwmh2"
+V1__create_users_table.sql
+V2__create_roles_table.sql
+V3__create_tasks_table.sql
+```
+
+Pattern:
+
+```text id="jlwmh3"
+V<version>__<description>.sql
+```
+
+---
+
+# Common Mistakes
+
+# WRONG
+
+```text id="jlwmh4"
+V1_create_users.sql
+```
+
+(single underscore)
+
+---
+
+# WRONG
+
+```text id="jlwmh5"
+create_users.sql
+```
+
+(no version)
+
+---
+
+# 7. Migration Types
+
+# Schema Migration
+
+Creates/changes tables.
+
+Example:
+
+```sql id="jlwmh6"
+ALTER TABLE users
+ADD COLUMN phone VARCHAR(20);
+```
+
+---
+
+# Data Migration
+
+Updates existing data.
+
+Example:
+
+```sql id="jlwmh7"
+UPDATE users
+SET status = 'ACTIVE';
+```
+
+---
+
+# Seed Migration
+
+Adds initial static data.
+
+Example:
+
+* roles
+* permissions
+* default admin
+
+---
+
+# 8. Seed Data Strategy
+
+# Example
+
+## V8__insert_roles.sql
+
+```sql id="jlwmh8"
+INSERT INTO roles(name, description)
+VALUES
+('ADMIN', 'System Administrator'),
+('MANAGER', 'Project Manager'),
+('EMPLOYEE', 'Regular Employee');
+```
+
+---
+
+# Why Seed Data Matters
+
+Enterprise systems need:
+
+* default roles
+* permissions
+* lookup values
+* configuration data
+
+---
+
+# 9. Roll-Forward Strategy
+
+# Enterprise Rule
+
+Usually:
+
+```text id="jlwmh9"
+Never rollback production migrations.
+```
+
+Instead:
+
+```text id="jlwmi0"
+Create corrective migration.
+```
+
+---
+
+# Example
+
+Wrong migration:
+
+```sql id="jlwmi1"
+DROP COLUMN email;
+```
+
+DON'T modify old file.
+
+Create:
+
+```text id="jlwmi2"
+V9__restore_email_column.sql
+```
+
+---
+
+# Why?
+
+Because production databases:
+
+* already executed migrations
+* may contain live data
+
+---
+
+# 10. Flyway Schema History Table
+
+# Table
+
+```text id="jlwmi3"
+flyway_schema_history
+```
+
+Tracks:
+
+* installed_rank
+* version
+* description
+* checksum
+* execution time
+* success/failure
+
+---
+
+# Verify
+
+Run:
+
+```sql id="jlwmi4"
+SELECT * FROM flyway_schema_history;
+```
+
+---
+
+# 11. Real Enterprise Migration Workflow
+
+# Developer Workflow
+
+```text id="jlwmi5"
+Create migration
+        ↓
+Commit to Git
+        ↓
+Push code
+        ↓
+CI/CD deploys
+        ↓
+Flyway executes automatically
+```
+
+---
+
+# Benefits
+
+* Consistent databases
+* Versioned schema
+* Team synchronization
+* Safe deployments
+
+---
+
+# 12. Advanced Flyway Commands
+
+# Clean
+
+Deletes all objects.
+
+```text id="jlwmi6"
+flyway clean
+```
+
+DANGEROUS in production.
+
+---
+
+# Repair
+
+Fixes checksum history.
+
+```text id="jlwmi7"
+flyway repair
+```
+
+Use carefully.
+
+---
+
+# Validate
+
+Checks migration consistency.
+
+```text id="jlwmi8"
+flyway validate
+```
+
+---
+
+# Info
+
+Shows migration state.
+
+```text id="jlwmi9"
+flyway info
+```
+
+---
+
+# 13. Enterprise Migration Best Practices
+
+# DO
+
+## Keep migrations small
+
+Good:
+
+```text id="jlwmj0"
+One logical change per migration
+```
+
+---
+
+## Use clear naming
+
+Good:
+
+```text id="jlwmj1"
+V10__add_priority_to_tasks.sql
+```
+
+---
+
+## Use constraints
+
+Protect database integrity.
+
+---
+
+## Test migrations locally first
+
+Always.
+
+---
+
+# DO NOT
+
+## Modify executed migrations
+
+Very important.
+
+---
+
+## Put huge unrelated changes in one file
+
+Avoid:
+
+```text id="jlwmj2"
+V20__everything.sql
+```
+
+---
+
+## Use Flyway clean in production
+
+Dangerous.
+
+---
+
+# 14. Real Enterprise Examples
+
+# Add New Column
+
+```sql id="jlwmj3"
+ALTER TABLE tasks
+ADD COLUMN due_date DATE;
+```
+
+---
+
+# Add Constraint
+
+```sql id="jlwmj4"
+ALTER TABLE users
+ADD CONSTRAINT uk_users_phone UNIQUE(phone);
+```
+
+---
+
+# Rename Column
+
+```sql id="jlwmj5"
+ALTER TABLE projects
+RENAME COLUMN name TO project_name;
+```
+
+---
+
+# Add Index
+
+```sql id="jlwmj6"
+CREATE INDEX idx_tasks_priority
+ON tasks(priority);
+```
+
+---
+
+# 15. Important Production Mindset
+
+# Database Changes Are Sensitive
+
+Bad migration can:
+
+* break production
+* lose data
+* cause downtime
+* corrupt systems
+
+That is why enterprise teams:
+
+* review migrations carefully
+* test them
+* use Flyway discipline
+
+---
+
+# 16. Practical Tasks Today
+
+# Task 1
+
+Create seed migration:
+
+## V7__insert_roles.sql
+
+Insert:
+
+* ADMIN
+* MANAGER
+* EMPLOYEE
+
+---
+
+# Task 2
+
+Create migration:
+
+## V8__add_due_date_to_tasks.sql
+
+Add:
+
+```text id="jlwmj7"
+due_date DATE
+```
+
+---
+
+# Task 3
+
+Create migration:
+
+## V9__add_task_priority_index.sql
+
+Create index for:
+
+```text id="jlwmj8"
+tasks.priority
+```
+
+---
+
+# Task 4
+
+Run application again.
+
+Verify:
+
+* Flyway executes new migrations
+* No checksum issues
+
+---
+
+# Task 5
+
+Check migration history:
+
+```sql id="jlwmj9"
+SELECT * FROM flyway_schema_history;
+```
+
+Understand:
+
+* version
+* checksum
+* execution order
+
+---
+
+# 17. Important Enterprise Understanding
+
+# Flyway Encourages Discipline
+
+It forces developers to:
+
+* think carefully
+* version database changes
+* avoid dangerous modifications
+
+This is why enterprise companies love Flyway.
+
+---
+
+# 18. End Of Day Outcome
+
+After today you should understand:
+
+* Migration lifecycle
+* Versioning discipline
+* Why checksum exists
+* Roll-forward strategy
+* Seed data strategy
+* Production migration mindset
+
+---
+
+# Tomorrow (Day 6)
+
+You will deeply learn:
+
+* User module design
+* RBAC (Role-Based Access Control)
+* Entity modeling
+* Authentication design
+* Authorization flow
+* Enterprise user management
+* Security foundations
