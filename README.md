@@ -427,124 +427,6 @@ Example:
 application
 infrastructure
 ```
-
----
-
-# 10. Today's Deliverables
-
-Complete these today:
-
-## Task 1
-
-Create a document/notebook containing:
-
-* Project overview
-* Features
-* Modules
-* Architecture layers
-
----
-
-## Task 2
-
-Draw architecture flow:
-
-```text
-Controller
-   ↓
-Use Case
-   ↓
-Domain
-   ↓
-Repository Interface
-   ↓
-Infrastructure Implementation
-   ↓
-PostgreSQL
-```
-
----
-
-## Task 3
-
-Create initial module planning.
-
-Example:
-
-```text
-users module
-tasks module
-projects module
-auth module
-```
-
----
-
-## Task 4
-
-Write main entities and relationships.
-
-Example:
-
-```text
-User → Role
-Project → Tasks
-Task → Assigned User
-```
-
----
-
-# Important Learning Concepts Today
-
-Understand these deeply:
-
-## Clean Architecture Dependency Rule
-
-Dependencies should point inward.
-
-Infrastructure should depend on Domain.
-
-Domain should NOT depend on Infrastructure.
-
----
-
-## Why Modular Monolith?
-
-Advantages:
-
-* Easier than microservices initially
-* Enterprise maintainability
-* Easier deployment
-* Easier debugging
-* Can later split into microservices
-
-Very important for your career because many companies use this approach before microservices.
-
----
-
-# End Of Day Outcome
-
-After Day 1 you should be able to explain:
-
-* What Clean Architecture is
-* Difference between layers
-* Why modular monolith matters
-* Core modules of enterprise backend systems
-* High-level enterprise backend design
-
----
-
-# Tomorrow (Day 2)
-
-You will learn deeply:
-
-* Domain Layer
-* Application Layer
-* Infrastructure Layer
-* Presentation Layer
-* Dependency inversion
-* Real enterprise flow between layers
-
 ---
 
 # Task 2 — Architecture Flow Diagram
@@ -1053,21 +935,6 @@ LOGIN
 
 ---
 
-# Recommended Next Step Before Day 2
-
-Create this planning document manually in:
-
-* Notion
-* Draw.io
-* Excalidraw
-* Notebook
-* Markdown file
-
-This improves architecture thinking, which is critical for senior backend development.
-
-
----
-
 
 
 # WEEK 1 — DAY 2
@@ -1172,19 +1039,6 @@ This is the HEART of the application.
 * Redis
 
 NO framework dependency.
-
----
-
-# Example Structure
-
-```text id="6k1qik"
-tasks/domain
-
-├── entity
-├── repository
-├── enums
-└── service
-```
 
 ---
 
@@ -1767,50 +1621,6 @@ tasks
 
 ---
 
-# 12. Today's Practical Tasks
-
-# Task 1
-
-Create folder structure manually.
-
----
-
-# Task 2
-
-Write simple:
-
-* Domain entity
-* Repository interface
-* Use case interface
-* Controller skeleton
-
-for:
-
-* User
-* Task
-
----
-
-# Task 3
-
-Draw dependency diagram:
-
-```text id="hf73fx"
-Presentation → Application → Domain
-Infrastructure → Domain
-```
-
----
-
-# Task 4
-
-Understand what belongs in:
-
-* Domain
-* Application
-* Infrastructure
-* Presentation
-
 ---
 
 # 13. Senior-Level Understanding
@@ -1827,33 +1637,6 @@ Protecting business logic.
 ```
 
 That is the REAL purpose.
-
----
-
-# 14. End Of Day Outcome
-
-After today you should clearly understand:
-
-* Responsibilities of each layer
-* Dependency rule
-* Enterprise request flow
-* Why Domain must stay independent
-* How modular monolith works internally
-
----
-
-# Tomorrow (Day 3)
-
-You will start REAL implementation:
-
-* Setup Spring Boot project
-* Configure PostgreSQL
-* Create package structure
-* Add dependencies
-* Setup modules
-* Run first application
-* Prepare enterprise foundation
-
 
 
 ---
@@ -2426,73 +2209,6 @@ UserService with 5000 lines
 ## Mix business logic inside controllers
 
 Wrong architecture.
-
----
-
-# 16. Today’s Practical Tasks
-
-# Task 1
-
-Setup project successfully.
-
----
-
-# Task 2
-
-Create complete folder structure.
-
----
-
-# Task 3
-
-Configure PostgreSQL connection.
-
----
-
-# Task 4
-
-Create Flyway migration.
-
----
-
-# Task 5
-
-Run application successfully.
-
----
-
-# Task 6
-
-Test health API.
-
----
-
-# 17. End Of Day Outcome
-
-After today you should know:
-
-* How enterprise Spring Boot projects start
-* Why Flyway matters
-* How package structures scale
-* PostgreSQL connection setup
-* Modular monolith implementation basics
-
----
-
-# Tomorrow (Day 4)
-
-You will deeply learn:
-
-* PostgreSQL
-* Database design
-* Relationships
-* Primary keys
-* Foreign keys
-* Constraints
-* Indexes
-* Normalization
-* Enterprise schema design
-
 
 ---
 
@@ -4157,14 +3873,1887 @@ After today you should understand:
 
 ---
 
-# Tomorrow (Day 6)
+# WEEK 1 — DAY 6
 
-You will deeply learn:
+# User Module Design — RBAC, Authentication & Enterprise User Management
+
+Today you will learn:
 
 * User module design
 * RBAC (Role-Based Access Control)
-* Entity modeling
-* Authentication design
+* Authentication concepts
+* Authorization concepts
+* User entity modeling
+* Role relationships
+* Enterprise security mindset
+* Spring Security foundations
+
+This is one of the MOST important backend topics.
+
+Almost every enterprise application has:
+
+* users
+* roles
+* permissions
+* authentication
+* authorization
+
+---
+
+# 1. What Is Authentication?
+
+# Authentication = Identity Verification
+
+Question:
+
+```text id="jlwml6"
+Who are you?
+```
+
+Example:
+
+* Login with email/password
+* JWT token validation
+
+---
+
+# Real Example
+
+```text id="jlwml7"
+Email: vidya@gmail.com
+Password: ********
+```
+
+System verifies:
+
+* user exists
+* password correct
+
+Then:
+
+```text id="jlwml8"
+Authenticated
+```
+
+---
+
+# 2. What Is Authorization?
+
+# Authorization = Access Control
+
+Question:
+
+```text id="jlwml9"
+What are you allowed to do?
+```
+
+Example:
+
+| Role     | Permissions                |
+| -------- | -------------------------- |
+| ADMIN    | Manage everything          |
+| MANAGER  | Manage projects/tasks      |
+| EMPLOYEE | View/update assigned tasks |
+
+---
+
+# Authentication vs Authorization
+
+| Authentication | Authorization    |
+| -------------- | ---------------- |
+| Who are you?   | What can you do? |
+| Login          | Permissions      |
+| Identity       | Access control   |
+
+Very important distinction.
+
+---
+
+# 3. RBAC (Role-Based Access Control)
+
+# Enterprise Standard Access Model
+
+Users get:
+
+```text id="jlwmma"
+Roles
+```
+
+Roles contain:
+
+```text id="jlwmmb"
+Permissions
+```
+
+---
+
+# Example
+
+```text id="jlwmmc"
+Vidya
+   ↓
+MANAGER role
+   ↓
+Can create tasks
+Can assign tasks
+Can view projects
+```
+
+---
+
+# Current Roles In Your System
+
+From your migration:
+
+```text id="jlwmmd"
+ADMIN
+MANAGER
+EMPLOYEE
+```
+
+Good enterprise starting point.
+
+---
+
+# 4. User Module Responsibilities
+
+# User Module Should Handle
+
+* User creation
+* User update
+* User activation/deactivation
+* Role assignment
+* User retrieval
+* Password storage
+* Authentication preparation
+
+---
+
+# 5. Enterprise User Entity Design
+
+# Recommended User Fields
+
+```text id="jlwmme"
+id
+first_name
+last_name
+email
+password
+status
+created_at
+updated_at
+```
+
+You already designed this correctly.
+
+Excellent.
+
+---
+
+# Why Each Field Matters
+
+# email
+
+Used for:
+
+* login
+* unique identity
+
+---
+
+# password
+
+Stores:
+
+* encrypted password
+
+NEVER store plain passwords.
+
+---
+
+# status
+
+Controls:
+
+* active users
+* locked users
+* disabled users
+
+---
+
+# created_at / updated_at
+
+Used for:
+
+* auditing
+* tracking
+* debugging
+
+---
+
+# 6. User Status Design
+
+# Recommended Status Values
+
+```text id="jlwmmf"
+ACTIVE
+INACTIVE
+LOCKED
+```
+
+---
+
+# Enterprise Meaning
+
+## ACTIVE
+
+Can use system.
+
+---
+
+## INACTIVE
+
+Temporarily disabled.
+
+---
+
+## LOCKED
+
+Security lock.
+
+Example:
+
+* too many failed logins
+
+---
+
+# 7. Role Entity Design
+
+# roles Table
+
+```text id="jlwmmg"
+id
+name
+description
+```
+
+Good design.
+
+---
+
+# Example Roles
+
+```text id="jlwmmh"
+ADMIN
+MANAGER
+EMPLOYEE
+```
+
+---
+
+# 8. User ↔ Role Relationship
+
+# Many-to-Many
+
+Why?
+
+One user can have:
+
+* ADMIN
+* MANAGER
+
+One role can belong to:
+
+* many users
+
+---
+
+# Your Existing Design
+
+```text id="jlwmmi"
+users
+roles
+user_roles
+```
+
+This is correct enterprise design.
+
+---
+
+# Relationship Flow
+
+```text id="jlwmmj"
+users
+   ↓
+user_roles
+   ↓
+roles
+```
+
+---
+
+# 9. Enterprise Authorization Examples
+
+# ADMIN
+
+Can:
+
+* manage users
+* delete projects
+* assign roles
+
+---
+
+# MANAGER
+
+Can:
+
+* create tasks
+* assign tasks
+* manage projects
+
+---
+
+# EMPLOYEE
+
+Can:
+
+* view assigned tasks
+* update own task status
+
+---
+
+# 10. Password Security (VERY IMPORTANT)
+
+# NEVER Store Plain Passwords
+
+WRONG:
+
+```text id="jlwmmk"
+password = admin123
+```
+
+---
+
+# ALWAYS Encrypt Passwords
+
+Use:
+
+```text id="jlwmml"
+BCrypt
+```
+
+Example encrypted password:
+
+```text id="jlwmmm"
+$2a$10$...
+```
+
+---
+
+# Why?
+
+If database leaks:
+
+* plain passwords become disaster
+
+Encrypted passwords protect users.
+
+---
+
+# 11. Spring Security Authentication Flow
+
+# Login Flow
+
+```text id="jlwmmn"
+User sends email/password
+        ↓
+Spring Security validates user
+        ↓
+Password checked
+        ↓
+JWT token generated
+        ↓
+User authenticated
+```
+
+---
+
+# 12. Future JWT Flow
+
+Later you will build:
+
+```text id="jlwmmo"
+POST /api/v1/auth/login
+```
+
+Returns:
+
+```json id="jlwmmp"
+{
+  "accessToken": "jwt-token"
+}
+```
+
+Then frontend sends:
+
+```http id="jlwmmq"
+Authorization: Bearer jwt-token
+```
+
+---
+
+# 13. Enterprise User Module Structure
+
+# Recommended Structure
+
+```text id="jlwmmr"
+users
+
+├── domain
+│   ├── entity
+│   ├── repository
+│   └── enums
+│
+├── application
+│   ├── dto
+│   ├── usecase
+│   └── service
+│
+├── infrastructure
+│   ├── persistence
+│   ├── mapper
+│   └── security
+│
+└── presentation
+    ├── controller
+    ├── request
+    └── response
+```
+
+---
+
+# 14. User Domain Entity
+
+# User.java
+
+```java id="jlwmms"
+public class User {
+
+    private Long id;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String email;
+
+    private String password;
+
+    private UserStatus status;
+}
+```
+
+---
+
+# UserStatus Enum
+
+## UserStatus.java
+
+```java id="jlwmmt"
+public enum UserStatus {
+    ACTIVE,
+    INACTIVE,
+    LOCKED
+}
+```
+
+---
+
+# 15. Role Domain Entity
+
+## Role.java
+
+```java id="jlwmmu"
+public class Role {
+
+    private Long id;
+
+    private String name;
+
+    private String description;
+}
+```
+
+---
+
+# 16. User Repository Design
+
+## UserRepository.java
+
+```java id="jlwmmv"
+public interface UserRepository {
+
+    User save(User user);
+
+    Optional<User> findById(Long id);
+
+    Optional<User> findByEmail(String email);
+
+    List<User> findAll();
+}
+```
+
+---
+
+# Why findByEmail Is Important?
+
+Authentication uses:
+
+```text id="jlwmmw"
+email lookup
+```
+
+frequently.
+
+That’s why:
+
+```text id="jlwmmx"
+users.email
+```
+
+was indexed/unique.
+
+---
+
+# 17. Create User Use Case
+
+# Responsibilities
+
+```text id="jlwmmy"
+Validate request
+Check email uniqueness
+Encrypt password
+Save user
+Assign default role
+Return response
+```
+
+---
+
+# Example Flow
+
+```text id="jlwmmz"
+CreateUserController
+        ↓
+CreateUserUseCase
+        ↓
+Validate email
+        ↓
+Encrypt password
+        ↓
+Save user
+        ↓
+Assign EMPLOYEE role
+```
+
+---
+
+# 18. Enterprise Security Best Practices
+
+# DO
+
+## Encrypt passwords
+
+Always.
+
+---
+
+## Use RBAC
+
+Enterprise standard.
+
+---
+
+## Validate user status
+
+Locked users should not login.
+
+---
+
+## Use unique emails
+
+Correct.
+
+---
+
+## Use JWT tokens
+
+Modern stateless authentication.
+
+---
+
+# DO NOT
+
+## Store plain passwords
+
+Never.
+
+---
+
+## Hardcode credentials
+
+Dangerous.
+
+---
+
+## Put security logic in controllers
+
+Wrong layer.
+
+---
+
+# 19. Practical Tasks Today
+
+# Task 1
+
+Create:
+
+* User domain entity
+* Role domain entity
+* UserStatus enum
+
+---
+
+# Task 2
+
+Create:
+
+* UserRepository interface
+
+---
+
+# Task 3
+
+Design:
+
+* CreateUserUseCase flow
+
+Write steps clearly.
+
+---
+
+# Task 4
+
+Draw RBAC flow:
+
+```text id="jlwmn0"
+User
+  ↓
+Roles
+  ↓
+Permissions
+```
+
+---
+
+# Task 5
+
+Understand authentication flow:
+
+```text id="jlwmn1"
+Login
+↓
+Validate credentials
+↓
+Generate JWT
+↓
+Authorize requests
+```
+
+---
+
+# 20. Important Enterprise Understanding
+
+# Security Is NOT Just Login
+
+Enterprise security includes:
+
+* authentication
+* authorization
+* encryption
+* token management
+* access control
+* audit tracking
+
+---
+
+# 21. End Of Day Outcome
+
+After today you should understand:
+
+* RBAC
+* Authentication vs authorization
+* Enterprise user modeling
+* Password security
+* JWT flow
+* User-role relationships
+* Security architecture mindset
+
+---
+
+Your Task 3 design is very good overall.
+
+You are already thinking in:
+
+* DTO flow
+* mapper layer
+* repository usage
+* validation flow
+* service separation
+
+Those are strong enterprise backend habits.
+
+Small correction:
+
+In controller you mentioned:
+
+```text id="jlwmn2"
+@GetMapping("api/v1/users")
+```
+
+For create user, it should be:
+
+```java id="jlwmn3"
+@PostMapping
+```
+
+because creating resource = POST.
+
+---
+
+# Task 4 — RBAC Flow Solution
+
+# RBAC = Role-Based Access Control
+
+# High-Level Flow
+
+```text id="jlwmn4"
+User
+  ↓
+Roles
+  ↓
+Permissions
+```
+
+---
+
+# Enterprise RBAC Flow
+
+```text id="jlwmn5"
+Vidya Sagar
+     ↓
+MANAGER Role
+     ↓
+Permissions:
+- CREATE_TASK
+- ASSIGN_TASK
+- UPDATE_PROJECT
+```
+
+---
+
+# Real System Flow
+
+```text id="jlwmn6"
+User logs in
+      ↓
+System loads user
+      ↓
+System loads roles
+      ↓
+System checks permissions
+      ↓
+Allow or deny request
+```
+
+---
+
+# Example Flow
+
+# ADMIN
+
+```text id="jlwmn7"
+ADMIN
+   ↓
+Can:
+- Create users
+- Delete users
+- Manage roles
+- Access all APIs
+```
+
+---
+
+# MANAGER
+
+```text id="jlwmn8"
+MANAGER
+   ↓
+Can:
+- Create tasks
+- Assign tasks
+- Manage projects
+```
+
+---
+
+# EMPLOYEE
+
+```text id="jlwmn9"
+EMPLOYEE
+   ↓
+Can:
+- View assigned tasks
+- Update own task status
+```
+
+---
+
+# Database Relationship Flow
+
+```text id="jlwmoa"
+users
+   ↓
+user_roles
+   ↓
+roles
+```
+
+---
+
+# Future Enterprise Permission Model
+
+Later systems may add:
+
+```text id="jlwmob"
+roles
+   ↓
+role_permissions
+   ↓
+permissions
+```
+
+Example:
+
+```text id="jlwmoc"
+CREATE_TASK
+DELETE_TASK
+VIEW_REPORTS
+MANAGE_USERS
+```
+
+This becomes:
+
+```text id="jlwmod"
+User
+ ↓
+Role
+ ↓
+Permission
+ ↓
+API Access
+```
+
+---
+
+# Spring Security Authorization Flow
+
+Later you’ll implement:
+
+```java id="jlwmoe"
+@PreAuthorize("hasRole('ADMIN')")
+```
+
+Example:
+
+```java id="jlwmof"
+@PreAuthorize("hasRole('MANAGER')")
+@PostMapping
+public TaskResponse createTask() {
+}
+```
+
+---
+
+# Enterprise Understanding
+
+RBAC helps:
+
+* centralized access control
+* security management
+* scalable permissions
+* enterprise governance
+
+Almost every large application uses RBAC.
+
+---
+
+# Task 5 — Authentication Flow Solution
+
+# Authentication Flow
+
+```text id="jlwmog"
+Login
+↓
+Validate Credentials
+↓
+Generate JWT Token
+↓
+Return Token
+↓
+Frontend Stores Token
+↓
+Frontend Sends Token
+↓
+Backend Validates Token
+↓
+Authorize Request
+```
+
+---
+
+# Detailed Enterprise Authentication Flow
+
+# Step 1 — Login Request
+
+Client sends:
+
+```http id="jlwmoh"
+POST /api/v1/auth/login
+```
+
+Request:
+
+```json id="jlwmoi"
+{
+  "email": "vidya@gmail.com",
+  "password": "password123"
+}
+```
+
+---
+
+# Step 2 — Backend Validates User
+
+System:
+
+* finds user by email
+* checks encrypted password
+* checks user status
+
+---
+
+# Step 3 — Password Verification
+
+Using:
+
+```text id="jlwmoj"
+BCryptPasswordEncoder
+```
+
+Example:
+
+```java id="jlwmok"
+passwordEncoder.matches(
+    rawPassword,
+    encryptedPassword
+);
+```
+
+---
+
+# Step 4 — Generate JWT Token
+
+Backend generates:
+
+```text id="jlwmol"
+JWT Access Token
+```
+
+Example:
+
+```text id="jlwmom"
+eyJhbGciOiJIUzI1Ni...
+```
+
+---
+
+# Step 5 — Return Token
+
+Response:
+
+```json id="jlwmon"
+{
+  "accessToken": "jwt-token"
+}
+```
+
+---
+
+# Step 6 — Frontend Stores Token
+
+Usually:
+
+* localStorage
+* sessionStorage
+* secure cookie
+
+---
+
+# Step 7 — Frontend Sends Token
+
+Every request:
+
+```http id="jlwmoo"
+Authorization: Bearer jwt-token
+```
+
+---
+
+# Step 8 — Spring Security Filter Validates JWT
+
+Backend:
+
+* validates token signature
+* checks expiration
+* extracts user info
+* loads roles
+
+---
+
+# Step 9 — Authorization Happens
+
+Example:
+
+```text id="jlwmop"
+MANAGER can create tasks
+EMPLOYEE cannot delete users
+```
+
+---
+
+# Final Enterprise Authentication Architecture
+
+```text id="jlwmoq"
+Client
+  ↓
+AuthController
+  ↓
+AuthenticationService
+  ↓
+UserRepository
+  ↓
+Password Validation
+  ↓
+JWT Generation
+  ↓
+Spring Security Context
+  ↓
+Authorized APIs
+```
+
+---
+
+# Important Enterprise Security Concepts
+
+# Authentication
+
+```text id="jlwmor"
+Who are you?
+```
+
+---
+
+# Authorization
+
+```text id="jlwmos"
+What can you do?
+```
+
+---
+
+# JWT
+
+```text id="jlwmot"
+Stateless authentication token
+```
+
+---
+
+# BCrypt
+
+```text id="jlwmou"
+Password encryption
+```
+
+---
+
+# Security Context
+
+Stores:
+
+* authenticated user
+* roles
+* authorities
+
+during request lifecycle.
+
+---
+
+# Future APIs You’ll Build
+
+## Auth APIs
+
+```http id="jlwmov"
+POST /api/v1/auth/login
+POST /api/v1/auth/refresh
+POST /api/v1/auth/logout
+```
+
+---
+
+# Your Current Understanding Is Strong
+
+You are already thinking in:
+
+* DTOs
+* layers
+* validation
+* repositories
+* RBAC
+* JWT flow
+* service orchestration
+
+That is excellent backend engineering progression for Week 1.
+---
+
+# Review + Refactor + Enterprise Cleanup
+
+| beginners                 | Senior engineers regularly                |
+|---------------------------| -------------------------- |
+| only build features       | review architecture|
+| never refactor	           | clean code |
+| ignore architecture quality | improve naming |
+|                           | reduce technical debt |
+|                           | validate structure |
+
+You are doing well and your Week 1 foundation is strong enough to continue.
+
+You now understand:
+
+* Clean Architecture
+* Modular Monolith
+* Flyway discipline
+* PostgreSQL relationships
+* RBAC basics
+* User module design
+* Migration strategy
+* Enterprise backend structure
+
+So yes — let’s start Day 7.
+
+---
+
+# WEEK 1 — DAY 7
+
+# Review + Refactor + Enterprise Cleanup
+
+Today is extremely important.
+
+Most beginners:
+
+* only build features
+* never refactor
+* ignore architecture quality
+
+Senior engineers regularly:
+
+* review architecture
+* clean code
+* improve naming
+* reduce technical debt
+* validate structure
+
+Today you will learn that mindset.
+
+---
+
+# 1. Day 7 Goal
+
+Today is NOT about adding features.
+
+It is about:
+
+```text id="jlwmov"
+Making your foundation clean and maintainable.
+```
+
+---
+
+# 2. What Is Refactoring?
+
+# Refactoring
+
+Means:
+
+```text id="jlwmow"
+Improving code structure
+WITHOUT changing behavior.
+```
+
+---
+
+# Examples
+
+## Better naming
+
+```text id="jlwmox"
+usrSrv
+```
+
+→
+
+```text id="jlwmoy"
+UserService
+```
+
+---
+
+## Better package organization
+
+Move misplaced classes.
+
+---
+
+## Smaller methods
+
+Break huge methods into readable methods.
+
+---
+
+## Remove duplicate code
+
+Very important.
+
+---
+
+# 3. Enterprise Review Areas Today
+
+You will review:
+
+* package structure
+* naming conventions
+* DTO naming
+* migration naming
+* API naming
+* layer responsibilities
+* validation placement
+* repository design
+* service responsibilities
+
+---
+
+# 4. Package Structure Review
+
+# Expected Structure
+
+```text id="jlwmoz"
+users
+
+├── domain
+│   ├── entity
+│   ├── repository
+│   └── enums
+│
+├── application
+│   ├── dto
+│   ├── usecase
+│   ├── service
+│   └── mapper
+│
+├── infrastructure
+│   ├── persistence
+│   ├── mapper
+│   └── config
+│
+└── presentation
+    ├── controller
+    ├── request
+    └── response
+```
+
+---
+
+# Review Questions
+
+Ask yourself:
+
+## Is every class in correct layer?
+
+Example:
+
+* controller logic inside service?
+* database logic inside controller?
+
+---
+
+## Is Domain clean?
+
+Should NOT contain:
+
+* Spring annotations
+* JPA annotations
+* REST logic
+
+---
+
+# 5. Naming Convention Review
+
+# Classes
+
+Use:
+
+```text id="jlwmp0"
+PascalCase
+```
+
+Examples:
+
+```text id="jlwmp1"
+UserService
+CreateTaskUseCase
+TaskController
+```
+
+---
+
+# Methods
+
+Use:
+
+```text id="jlwmp2"
+camelCase
+```
+
+Examples:
+
+```text id="jlwmp3"
+createUser()
+findByEmail()
+assignTask()
+```
+
+---
+
+# Packages
+
+Use:
+
+```text id="jlwmp4"
+lowercase
+```
+
+Examples:
+
+```text id="jlwmp5"
+controller
+service
+repository
+```
+
+---
+
+# Variables
+
+Use meaningful names.
+
+BAD:
+
+```java id="jlwmp6"
+String s;
+```
+
+GOOD:
+
+```java id="jlwmp7"
+String email;
+```
+
+---
+
+# 6. API Design Review
+
+# REST API Naming
+
+GOOD:
+
+```http id="jlwmp8"
+GET /api/v1/users
+POST /api/v1/users
+GET /api/v1/tasks
+```
+
+---
+
+# BAD
+
+```http id="jlwmp9"
+/getUsers
+/createTask
+```
+
+Avoid verb-based URLs.
+
+REST uses:
+
+* HTTP methods
+* resource names
+
+---
+
+# 7. DTO Review
+
+# Request DTO
+
+Should contain:
+
+* client input
+* validation annotations
+
+Example:
+
+```java id="jlwmpa"
+@NotBlank
+private String email;
+```
+
+---
+
+# Response DTO
+
+Should:
+
+* hide sensitive fields
+* expose only needed data
+
+---
+
+# NEVER Return Password
+
+BAD:
+
+```json id="jlwmpb"
+{
+  "password": "$2a$10$..."
+}
+```
+
+Never expose passwords.
+
+---
+
+# 8. Service Layer Review
+
+# Services SHOULD
+
+* orchestrate business logic
+* coordinate repositories
+* validate workflows
+
+---
+
+# Services SHOULD NOT
+
+* contain SQL
+* handle HTTP
+* build huge god methods
+
+---
+
+# BAD
+
+```java id="jlwmpc"
+public void createUser() {
+   // 500 lines
+}
+```
+
+---
+
+# GOOD
+
+```java id="jlwmpd"
+validateEmail();
+validateRole();
+saveUser();
+mapResponse();
+```
+
+---
+
+# 9. Repository Review
+
+# Repository Responsibilities
+
+Only:
+
+* database access
+* persistence operations
+
+---
+
+# BAD
+
+```java id="jlwmpe"
+sendEmail();
+generateJWT();
+```
+
+inside repository.
+
+Wrong responsibility.
+
+---
+
+# GOOD
+
+```java id="jlwmpf"
+findByEmail();
+save();
+findAll();
+```
+
+---
+
+# 10. Validation Review
+
+# Input Validation
+
+Should happen:
+
+* request layer
+* service layer
+
+---
+
+# Example
+
+```java id="jlwmpg"
+@NotBlank
+@Email
+private String email;
+```
+
+---
+
+# Business Validation
+
+Inside service.
+
+Example:
+
+```text id="jlwmph"
+email already exists
+role does not exist
+user locked
+```
+
+---
+
+# 11. Exception Handling Review
+
+# Recommended Future Structure
+
+```text id="jlwmpi"
+common
+
+└── exception
+    ├── GlobalExceptionHandler
+    ├── ResourceNotFoundException
+    ├── DuplicateResourceException
+    └── UnauthorizedException
+```
+
+---
+
+# Enterprise Goal
+
+Consistent API errors.
+
+---
+
+# Example Error Response
+
+```json id="jlwmpj"
+{
+  "timestamp": "2026-06-02T10:00:00",
+  "message": "Email already exists",
+  "status": 400
+}
+```
+
+---
+
+# 12. Migration Review
+
+# Verify
+
+* correct ordering
+* proper naming
+* no modified migrations
+* constraints exist
+* indexes exist
+
+---
+
+# Your Current Migration Sequence
+
+Good:
+
+```text id="jlwmpk"
+V1 → users
+V2 → roles
+V3 → user_roles
+V4 → projects
+V5 → tasks
+V6 → indexes
+V7 → seed roles
+V8 → due_date
+V9 → priority index
+```
+
+Excellent progression.
+
+---
+
+# 13. Security Review
+
+# Current Security
+
+You already:
+
+* enabled Spring Security
+* allowed `/health`
+* protected remaining APIs
+
+Good foundation.
+
+---
+
+# Future Security Improvements
+
+Later:
+
+* JWT
+* BCrypt
+* UserDetailsService
+* authentication filter
+* authorization rules
+
+---
+
+# 14. Technical Debt Awareness
+
+# Technical Debt
+
+Means:
+
+```text id="jlwmpl"
+Short-term shortcuts
+that create long-term problems.
+```
+
+---
+
+# Examples
+
+* giant service classes
+* duplicate logic
+* bad naming
+* missing validation
+* mixed responsibilities
+
+---
+
+# Enterprise Engineers Regularly Refactor
+
+Because:
+
+* codebases grow
+* teams grow
+* complexity grows
+
+---
+
+# 15. Week 1 Final Architecture
+
+# Current Enterprise Foundation
+
+```text id="jlwmpm"
+Spring Boot
+    ↓
+Modular Monolith
+    ↓
+Clean Architecture
+    ↓
+PostgreSQL
+    ↓
+Flyway
+    ↓
+RBAC Design
+    ↓
+Spring Security Foundation
+```
+
+This is already strong beginner-to-intermediate backend architecture.
+
+---
+
+# 16. Practical Tasks Today
+
+# Task 1
+
+Review all package names.
+
+Ensure:
+
+* lowercase
+* clean structure
+* no misplaced classes
+
+---
+
+# Task 2
+
+Review DTOs.
+
+Ensure:
+
+* validation annotations
+* no password exposure
+* meaningful names
+
+---
+
+# Task 3
+
+Review service methods.
+
+Refactor:
+
+* large methods
+* duplicated logic
+* unclear naming
+
+---
+
+# Task 4
+
+Review migrations.
+
+Verify:
+
+* constraints
+* indexes
+* naming consistency
+
+---
+
+# Task 5
+
+Review API naming.
+
+Ensure RESTful style.
+
+---
+
+# Task 6
+
+Create Week 1 Architecture Diagram
+
+Example:
+
+```text id="jlwmpn"
+Controller
+   ↓
+Service / Use Case
+   ↓
+Repository Interface
+   ↓
+Infrastructure Repository
+   ↓
+PostgreSQL
+```
+
+---
+
+# 17. Week 1 Achievements
+
+You completed:
+
+# Architecture
+
+* Clean Architecture
+* Modular Monolith
+
+---
+
+# Database
+
+* PostgreSQL
+* Relationships
+* Constraints
+* Indexes
+
+---
+
+# Migration Management
+
+* Flyway
+* Versioning
+* Schema evolution
+
+---
+
+# Security Foundations
+
+* RBAC
+* Authentication flow
 * Authorization flow
-* Enterprise user management
-* Security foundations
+
+---
+
+# Enterprise Design
+
+* DTOs
+* repositories
+* services
+* layered architecture
+
+---
+
+# 18. End Of Week 1 Outcome
+
+After Week 1 you now understand:
+
+* enterprise backend structure
+* migration discipline
+* database design
+* RBAC architecture
+* Clean Architecture fundamentals
+* modular monolith design
+
+This is a strong foundation for Spring Boot backend engineering.
+
+---
